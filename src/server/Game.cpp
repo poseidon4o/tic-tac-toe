@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <algorithm>
+#include <sstream>
 
 using namespace std;
 
@@ -41,4 +42,25 @@ void Game::checkWinner(int x, int y) {
     });
 
     mWinner = isWinner ? mNextTurn : NONE;
+}
+
+static char toSymbol(Game::Color color) {
+    static array<char, 3> map = { 'X', 'O', ' ' };
+    return map[color];
+}
+
+string Game::ToString() const {
+    stringstream stream;
+    stream << "On move [" << toSymbol(mNextTurn) << "]\n";
+    for (int c = 0; c < Game::Size; ++c) {
+        for (int r = 0; r < Game::Size; ++r) {
+            stream << toSymbol(mBoard[c][r]) << (r == Game::Size - 1 ? '\n' : '|');
+        }
+        if (c != Game::Size - 1) {
+            for (int r = 0; r < Game::Size; ++r) {
+                stream << '-' << (r == Game::Size - 1 ? '\n' : '+');
+            }
+        }
+    }
+    return stream.str();
 }
