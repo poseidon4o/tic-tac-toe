@@ -23,6 +23,11 @@ public:
     int Send(const char * data, int size);
     int Recv(char * data, int size);
 
+    bool SendRetries(const char * data, int size, int retries = 5);
+    bool RecvRetries(char * data, int size, int retries = 5);
+
+    void ClearRecv();
+
     void Close();
 
     std::string GetPeerName();
@@ -47,6 +52,12 @@ public:
 class Client: public Socket {
 public:
     Client();
+    Client(Client && cl);
+
+    Client(const Client &) = delete;
+    Client & operator=(const Client &) = delete;
+
+    ~Client() = default;
 
     bool Connect(const std::string & ip, int port);
 };

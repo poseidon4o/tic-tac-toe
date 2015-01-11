@@ -1,3 +1,5 @@
+#pragma comment(lib, "Ws2_32.lib")
+
 #include "Net.h"
 
 #if defined(_WIN32)
@@ -29,8 +31,43 @@ int Socket::Send(const char * data, int size) {
     return mSocket != -1 ? send(mSocket, data, size, 0) : -1;
 }
 
+static bool wouldBlock() {
+#ifdef C_WIN_SOCK
+    int err = WSAGetLastError();
+    return err && err == WSAEWOULDBLOCK;
+#else
+    return errno && errno == EAGAIN || errno == EWOULDBLOCK;
+#endif
+}
+
+bool Socket::SendRetries(const char * data, int size, int retries) {
+    int sent = 0;
+    do {
+        sent += Send(data + sent, size - sent);
+    } while (sent != size && wouldBlock() && --retries);
+
+    return sent == size;
+}
+
 int Socket::Recv(char * data, int size) {
     return mSocket != -1 ? recv(mSocket, data, size, 0) : -1;
+}
+
+bool Socket::RecvRetries(char * data, int size, int retries) {
+    int recv = 0;
+    do {
+        recv += Recv(data + recv, size - recv);
+    } while (recv != size && wouldBlock() && --retries);
+
+    return recv == size;
+}
+
+void Socket::ClearRecv() {
+    char buff[256];
+    int got = 0, retries = 10;
+    do {
+        got = Recv(buff, 256);
+    } while (got && !wouldBlock() && --retries);
 }
 
 Socket::operator bool() {
@@ -140,6 +177,10 @@ Socket Server::Accept() {
 
 Client::Client(): Socket(-1) {
 }
+
+Client::Client(Client && cl): Socket(std::move(cl)) {
+}
+
 
 bool Client::Connect(const std::string & ip, int port) {
 

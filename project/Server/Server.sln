@@ -8,7 +8,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server.vcxproj", 
 		{6D7DDC5A-4C9F-4600-B38E-1442C78847E6} = {6D7DDC5A-4C9F-4600-B38E-1442C78847E6}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "..\..\Common\Common.vcxproj", "{6D7DDC5A-4C9F-4600-B38E-1442C78847E6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "..\Common\Common.vcxproj", "{6D7DDC5A-4C9F-4600-B38E-1442C78847E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
