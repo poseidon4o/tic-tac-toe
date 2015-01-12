@@ -1,5 +1,3 @@
-#pragma comment(lib, "Ws2_32.lib")
-
 #include "Net.h"
 
 #if defined(_WIN32)
