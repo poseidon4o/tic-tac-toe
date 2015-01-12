@@ -43,7 +43,7 @@ static bool wouldBlock() {
     int err = WSAGetLastError();
     return err && err == WSAEWOULDBLOCK;
 #else
-    return errno && errno == EAGAIN || errno == EWOULDBLOCK;
+    return errno && (errno == EAGAIN || errno == EWOULDBLOCK);
 #endif
 }
 
@@ -137,13 +137,22 @@ bool Server::Start(int port) {
     desc.sin_addr.s_addr = htonl(INADDR_ANY);
     desc.sin_port = htons(port);
 
+    int opt = 1;
+    int soopt = setsockopt(mSocket, SOL_SOCKET, SO_REUSEPORT | SO_REUSEADDR, &opt, sizeof(opt));
+    if (soopt != 0) {
+	Stop();
+	return false;
+    }
+    
     int status = bind(mSocket, reinterpret_cast<sockaddr*>(&desc), sizeof(desc));
     if (status < 0) {
+	Stop();
         return false;
     }
-
+    
     status = listen(mSocket, SOMAXCONN);
     if (status < 0) {
+	Stop();
         return false;
     }
 
