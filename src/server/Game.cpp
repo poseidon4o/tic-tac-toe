@@ -14,6 +14,10 @@ Game::Color Game::GetWinner() const {
     return mWinner;
 }
 
+Game::Color Game::OnMove() const {
+    return mNextTurn;
+}
+
 bool Game::MakeMove(int x, int y) {
     if (mBoard[x][y] != Color::NONE) {
         return false;

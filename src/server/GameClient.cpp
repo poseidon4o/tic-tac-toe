@@ -2,37 +2,44 @@
 
 #include <string>
 #include <sstream>
+#include <iostream>
 using namespace std;
 
-GameClient::GameClient(Client cl): cl(std::move(cl)) {
+GameClient::GameClient(Socket sock): mSocket(std::move(sock)) {
 }
 
 GameClient::~GameClient() {
-    cl.Close();
+    mSocket.Close();
+}
+
+GameClient::operator bool() {
+    return mSocket;
 }
 
 
-TextClient::TextClient(Client cl): GameClient(std::move(cl)) {
+TextClient::TextClient(Socket sock): GameClient(std::move(sock)) {
 }
 
 TextClient::~TextClient() {
 }
 
 bool TextClient::SendData(const Game & game) {
-    std::string data = "Current board:\n" + game.ToString() + "\nNext move in form [x, y]:\n";
-    return cl.SendRetries(data.c_str(), data.size());
+    string data = "Current board:\n" + game.ToString() + "\nNext move in form [x, y]:\n";
+    return mSocket.SendRetries(data.c_str(), data.size());
 }
 
 bool TextClient::GetNextTurn(int & x, int & y) {
     char input[8];
+    int received = sizeof(input) - 1;
 
-    if (cl.RecvRetries(reinterpret_cast<char*>(&input), sizeof(input))) {
-        stringstream str(input);
+    if (mSocket.RecvMax(reinterpret_cast<char*>(&input), received) && received) {
+        input[received] = 0;
+        stringstream strm(input);
         int ix, iy;
-        if (str >> ix && str >> iy) {
+        if ((strm >> ix) && (strm >> iy)) {
             x = ix;
             y = iy;
-            cl.ClearRecv();
+            mSocket.ClearRecv();
             return true;
         }
     }

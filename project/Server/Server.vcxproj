@@ -75,6 +75,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\server\Game.cpp" />
     <ClCompile Include="..\..\src\server\GameClient.cpp" />
+    <ClCompile Include="..\..\src\server\GameServer.cpp" />
     <ClCompile Include="..\..\src\server\main.cpp" />
   </ItemGroup>
   <ItemGroup>

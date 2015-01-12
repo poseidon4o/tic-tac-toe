@@ -24,7 +24,7 @@ public:
     int Recv(char * data, int size);
 
     bool SendRetries(const char * data, int size, int retries = 5);
-    bool RecvRetries(char * data, int size, int retries = 5);
+    bool RecvMax(char * data, int & size);
 
     void ClearRecv();
 
@@ -52,7 +52,6 @@ public:
 class Client: public Socket {
 public:
     Client();
-    Client(Client && cl);
 
     Client(const Client &) = delete;
     Client & operator=(const Client &) = delete;

@@ -53,13 +53,9 @@ int Socket::Recv(char * data, int size) {
     return mSocket != -1 ? recv(mSocket, data, size, 0) : -1;
 }
 
-bool Socket::RecvRetries(char * data, int size, int retries) {
-    int recv = 0;
-    do {
-        recv += Recv(data + recv, size - recv);
-    } while (recv != size && wouldBlock() && --retries);
-
-    return recv == size;
+bool Socket::RecvMax(char * data, int & size) {
+    size = Recv(data, size);
+    return size > 0 || (size == SOCKET_ERROR && !wouldBlock());
 }
 
 void Socket::ClearRecv() {
@@ -108,6 +104,15 @@ Server::~Server() {
     Stop();
 }
 
+static bool setNonBlocking(int sockfd) {
+#ifdef C_WIN_SOCK
+    u_long mode = 1;
+    return ioctlsocket(sockfd, FIONBIO, &mode) == NO_ERROR;
+#else
+    return fcntl(sockfd, F_SETFL, O_NONBLOCK) != SOCKET_ERROR;
+#endif
+}
+
 bool Server::Start(int port) {
     if (mSocket != -1) {
         return false;
@@ -135,6 +140,11 @@ bool Server::Start(int port) {
         return false;
     }
 
+    if (!setNonBlocking(mSocket)) {
+        Stop();
+        return false;
+    }
+
     return true;
 }
 
@@ -147,15 +157,6 @@ void Server::Stop() {
 #endif
         mSocket = -1;
     }
-}
-
-static bool setNonBlocking(int sockfd) {
-#ifdef C_WIN_SOCK
-    u_long mode = 1;
-    return ioctlsocket(sockfd, FIONBIO, &mode) == NO_ERROR;
-#else
-    return fcntl(sockfd, F_SETFL, O_NONBLOCK) != SOCKET_ERROR;
-#endif
 }
 
 Socket Server::Accept() {
@@ -177,10 +178,6 @@ Socket Server::Accept() {
 
 Client::Client(): Socket(-1) {
 }
-
-Client::Client(Client && cl): Socket(std::move(cl)) {
-}
-
 
 bool Client::Connect(const std::string & ip, int port) {
 

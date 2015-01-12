@@ -18,12 +18,10 @@ private:
     std::array<Row, Game::Size> mBoard;
     Color mNextTurn, mWinner;
 public:
-
-
-
-    Game(Color first);
+    Game(Color first = Color::X);
 
     Color GetWinner() const;
+    Color OnMove() const;
 
     bool MakeMove(int x, int y);
 

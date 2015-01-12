@@ -3,8 +3,52 @@
 
 #include "../common/Net.h"
 
-class GameServer: protected Server {
+#include "GameClient.h"
+#include "Game.h"
 
+#include <vector>
+#include <stack>
+#include <memory>
+#include <array>
+
+typedef std::unique_ptr<GameClient> remote_cl;
+
+class GamePair {
+    std::array<remote_cl, 2> mPlayers;
+    Game mGame;
+    bool mSentData;
+public:
+    GamePair(const GamePair &) = delete;
+    GamePair & operator=(const GamePair &) = delete;
+
+    GamePair() = delete;
+    GamePair(remote_cl pl1, remote_cl pl2);
+
+    GamePair(GamePair && gp);
+    GamePair & operator=(GamePair && gp);
+
+    void Update();
+    bool Finished() const;
+};
+
+
+
+class GameServer: protected Server {
+    
+    typedef std::array<remote_cl, 2> game_pair;
+
+    std::stack<remote_cl> mWaiting;
+    std::vector<GamePair> mPlaying;
+
+    remote_cl getClient();
+
+    GameServer(const GameServer &) = delete;
+    GameServer & operator=(const GameServer &) = delete;
+
+public:
+    GameServer();
+
+    void run();
 
 };
 

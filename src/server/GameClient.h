@@ -6,11 +6,13 @@
 
 class GameClient {
 protected:
-    Client cl;
+    Socket mSocket;
 public:
-    GameClient(Client cl);
+    GameClient(Socket sock);
     
     virtual ~GameClient();
+
+    operator bool();
 
     virtual bool GetNextTurn(int & x, int & y) = 0;
     virtual bool SendData(const Game & game) = 0;
@@ -20,7 +22,7 @@ public:
 
 class TextClient: public GameClient {
 public:
-    TextClient(Client cl);
+    TextClient(Socket sock);
     ~TextClient() override;
 
     bool GetNextTurn(int & x, int & y) override;
