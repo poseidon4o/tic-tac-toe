@@ -40,6 +40,7 @@ void GamePair::Update() {
         if (mGame.MakeMove(x, y)) {
             mSentData = false;
         }
+        next->SendData(mGame);
     }
 }
 
