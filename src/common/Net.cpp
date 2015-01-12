@@ -1,25 +1,25 @@
 #include "Net.h"
 
 #if defined(_WIN32)
-    #define C_WIN_SOCK
-    #include <winsock2.h>
-    #include <WS2tcpip.h>
+#define C_WIN_SOCK
+#include <winsock2.h>
+#include <WS2tcpip.h>
 #else
-    #define SOCKET_ERROR -1
-    
-    #include <cstdlib>
-    #include <errno.h>
-    #include <cstring>
-    #include <fcntl.h>
+#define SOCKET_ERROR -1
 
-    #include <sys/socket.h>
-    #include <sys/types.h>
-    #include <sys/stat.h>
+#include <cstdlib>
+#include <errno.h>
+#include <cstring>
+#include <fcntl.h>
 
-    #include <netinet/in.h>
-    #include <arpa/inet.h>
-    #include <unistd.h>
-    #include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
 #endif
 
 Socket::Socket(int sockfd): mSocket(sockfd) {
@@ -49,9 +49,20 @@ static bool wouldBlock() {
 
 bool Socket::SendRetries(const char * data, int size, int retries) {
     int sent = 0;
+    bool block = false;
     do {
-        sent += Send(data + sent, size - sent);
-    } while (sent != size && wouldBlock() && --retries);
+        int got = Send(data + sent, size - sent);
+        if (got == 0) {
+            mSocket = -1;
+            return false;
+        } else if (got < 0) {
+            block = wouldBlock();
+            if (!block) {
+                mSocket = -1;
+                return false;
+            }
+        }
+    } while (sent != size && block && --retries);
 
     return sent == size;
 }
@@ -61,8 +72,18 @@ int Socket::Recv(char * data, int size) {
 }
 
 bool Socket::RecvMax(char * data, int & size) {
+    bool block = false;
     size = Recv(data, size);
-    return size > 0 || (size == SOCKET_ERROR && !wouldBlock());
+    if (size == 0) {
+        mSocket = -1;
+    } else if (size < 0) {
+        block = wouldBlock();
+        if (!block) {
+            mSocket = -1;
+            return false;
+        }
+    }
+    return size > 0;
 }
 
 void Socket::ClearRecv() {
@@ -140,19 +161,19 @@ bool Server::Start(int port) {
     int opt = 1;
     int soopt = setsockopt(mSocket, SOL_SOCKET, SO_REUSEPORT | SO_REUSEADDR, &opt, sizeof(opt));
     if (soopt != 0) {
-	Stop();
-	return false;
-    }
-    
-    int status = bind(mSocket, reinterpret_cast<sockaddr*>(&desc), sizeof(desc));
-    if (status < 0) {
-	Stop();
+        Stop();
         return false;
     }
-    
+
+    int status = bind(mSocket, reinterpret_cast<sockaddr*>(&desc), sizeof(desc));
+    if (status < 0) {
+        Stop();
+        return false;
+    }
+
     status = listen(mSocket, SOMAXCONN);
     if (status < 0) {
-	Stop();
+        Stop();
         return false;
     }
 

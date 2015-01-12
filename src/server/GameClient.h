@@ -14,6 +14,7 @@ public:
 
     operator bool();
 
+    virtual bool SendPrompt() = 0;
     virtual bool GetNextTurn(int & x, int & y) = 0;
     virtual bool SendData(const Game & game) = 0;
 };
@@ -25,6 +26,7 @@ public:
     TextClient(Socket sock);
     ~TextClient() override;
 
+    bool SendPrompt() override;
     bool GetNextTurn(int & x, int & y) override;
     bool SendData(const Game & game) override;
 };

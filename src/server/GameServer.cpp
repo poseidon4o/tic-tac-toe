@@ -32,7 +32,10 @@ void GamePair::Update() {
     remote_cl & next = mPlayers[mGame.OnMove()];
     if (!mSentData) {
         next->SendData(mGame);
-        mSentData = true;
+	if (!mGame.Finished()) {
+	    next->SendPrompt();
+	}
+	mSentData = true;
     }
 
     int x, y;
@@ -41,13 +44,16 @@ void GamePair::Update() {
             mSentData = false;
         }
         next->SendData(mGame);
+	if (!mGame.Finished()) {
+	    next->SendPrompt();
+	}
     }
 }
 
 
 // TODO: check for client connection
 bool GamePair::Finished() const {
-    return mGame.GetWinner() != Game::Color::NONE;
+    return mGame.Finished() || false == *mPlayers[0] || false == *mPlayers[1];
 }
 
 
@@ -79,7 +85,7 @@ void GameServer::run() {
             mPlaying.push_back(GamePair(std::move(left), std::move(right)));
         }
 
-        remove_if(mPlaying.begin(), mPlaying.end(), mem_fn(&GamePair::Finished));
+        mPlaying.erase(remove_if(mPlaying.begin(), mPlaying.end(), mem_fn(&GamePair::Finished)), mPlaying.end());
 
         for_each(mPlaying.begin(), mPlaying.end(), mem_fn(&GamePair::Update));        
 

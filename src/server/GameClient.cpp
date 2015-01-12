@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 GameClient::GameClient(Socket sock): mSocket(std::move(sock)) {
@@ -24,8 +25,13 @@ TextClient::~TextClient() {
 }
 
 bool TextClient::SendData(const Game & game) {
-    string data = "Current board:\n" + game.ToString() + "\nNext move in form [x, y]:\n";
+    string data = "Current board:\n" + game.ToString();
     return mSocket.SendRetries(data.c_str(), data.size());
+}
+
+bool TextClient::SendPrompt() {
+    const char * prompt = "\nNext move in form [x, y]:\n";
+    return mSocket.SendRetries(prompt, strlen(prompt));
 }
 
 bool TextClient::GetNextTurn(int & x, int & y) {

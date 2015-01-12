@@ -20,10 +20,11 @@ private:
 public:
     Game(Color first = Color::X);
 
+    bool Finished() const;
     Color GetWinner() const;
     Color OnMove() const;
 
-    bool MakeMove(int x, int y);
+    bool MakeMove(int y, int x);
 
     std::string ToString() const;
 

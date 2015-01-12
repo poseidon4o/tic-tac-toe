@@ -7,7 +7,6 @@ using namespace std;
 
 int main(int argc, char * argv[]) {
     GameServer server;
-    
     server.run();
 
     return 0;
