@@ -58,9 +58,9 @@ GameServer::GameServer() {
 remote_cl GameServer::getClient() {
     Socket sock = Accept();
     if (sock) {
-        return make_unique<TextClient>(std::move(sock));
+        return std::unique_ptr<TextClient>(new TextClient(std::move(sock)));
     }
-    return unique_ptr<TextClient>(nullptr);
+    return std::unique_ptr<TextClient>(nullptr);
 }
 
 void GameServer::run() {

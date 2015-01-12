@@ -5,8 +5,17 @@
     #include <winsock2.h>
     #include <WS2tcpip.h>
 #else
+    #define SOCKET_ERROR -1
+    
+    #include <cstdlib>
+    #include <errno.h>
+    #include <cstring>
+    #include <fcntl.h>
+
     #include <sys/socket.h>
     #include <sys/types.h>
+    #include <sys/stat.h>
+
     #include <netinet/in.h>
     #include <arpa/inet.h>
     #include <unistd.h>
