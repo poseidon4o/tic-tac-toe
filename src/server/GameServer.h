@@ -16,7 +16,7 @@ typedef std::unique_ptr<GameClient> remote_cl;
 class GamePair {
     std::array<remote_cl, 2> mPlayers;
     Game mGame;
-    bool mSentData;
+    bool mSentData, mGetData;
 public:
     GamePair(const GamePair &) = delete;
     GamePair & operator=(const GamePair &) = delete;
@@ -37,7 +37,7 @@ class GameServer: protected Server {
     
     typedef std::array<remote_cl, 2> game_pair;
 
-    std::stack<remote_cl> mWaiting;
+    std::vector<remote_cl> mWaiting;
     std::vector<GamePair> mPlaying;
 
     remote_cl getClient();

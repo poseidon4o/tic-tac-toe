@@ -17,7 +17,6 @@ GameClient::operator bool() {
     return mSocket;
 }
 
-
 TextClient::TextClient(Socket sock): GameClient(std::move(sock)) {
 }
 
@@ -30,7 +29,7 @@ bool TextClient::SendData(const Game & game) {
 }
 
 bool TextClient::SendPrompt() {
-    const char * prompt = "\nNext move in form [x, y]:\n";
+    const char * prompt = "\nNext move in form [x y]:\n";
     return mSocket.SendRetries(prompt, strlen(prompt));
 }
 
