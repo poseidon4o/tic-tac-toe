@@ -27,6 +27,8 @@ public:
     GamePair(GamePair && gp);
     GamePair & operator=(GamePair && gp);
 
+    ~GamePair();
+
     void Update();
     bool Finished() const;
 };

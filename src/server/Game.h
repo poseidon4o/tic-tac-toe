@@ -21,6 +21,8 @@ private:
 public:
     Game(Color first = Color::X);
 
+    static const std::string & ColorToSymbol(Game::Color color);
+
     bool Finished() const;
     Color GetWinner() const;
     Color OnMove() const;

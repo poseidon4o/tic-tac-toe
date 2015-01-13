@@ -11,6 +11,10 @@ using namespace std;
 GamePair::GamePair(remote_cl left, remote_cl right) : mGame(Game::Color::X), mSentData(false), mGetData(false) {
     mPlayers[0] = std::move(left);
     mPlayers[1] = std::move(right);
+
+    for (int c = 0; c < 2; ++c) {
+        mPlayers[c]->SetColor(static_cast<Game::Color>(c));
+    }
 }
 
 GamePair & GamePair::operator=(GamePair && gp) {
@@ -43,11 +47,14 @@ void GamePair::Update() {
 
     int x, y;
     if (next->GetNextTurn(x, y)) {
+        bool validMove = mGame.MakeMove(x, y);
+
         if (!mGetData) {
             mGetData = true;
             next->SendData(mGame);
         }
-        if (mGame.MakeMove(x, y)) {
+
+        if (validMove) {
             mGetData = false;
             mSentData = false;
         } else if (!mGame.Finished()) {
@@ -60,6 +67,15 @@ void GamePair::Update() {
 // TODO: check for client connection
 bool GamePair::Finished() const {
     return mGame.Finished() || false == *mPlayers[0] || false == *mPlayers[1];
+}
+
+GamePair::~GamePair() {
+    if (mPlayers[0]) {
+        mPlayers[0]->SendData(mGame);
+    }
+    if (mPlayers[1]) {
+        mPlayers[1]->SendData(mGame);
+    }
 }
 
 

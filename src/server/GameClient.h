@@ -14,6 +14,7 @@ public:
 
     operator bool();
 
+    virtual void SetColor(Game::Color c) = 0;
     virtual bool SendPrompt() = 0;
     virtual bool GetNextTurn(int & x, int & y) = 0;
     virtual bool SendData(const Game & game) = 0;
@@ -26,6 +27,7 @@ public:
     TextClient(Socket sock);
     ~TextClient() override;
 
+    void SetColor(Game::Color c) override;
     bool SendPrompt() override;
     bool GetNextTurn(int & x, int & y) override;
     bool SendData(const Game & game) override;
@@ -38,6 +40,7 @@ public:
     BinaryClient(Socket sock);
     ~BinaryClient() override;
 
+    void SetColor(Game::Color c) override;
     bool SendPrompt() override;
     bool GetNextTurn(int & x, int & y) override;
     bool SendData(const Game & game) override;

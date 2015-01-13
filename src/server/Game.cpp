@@ -24,13 +24,13 @@ Game::Color Game::OnMove() const {
 
 bool Game::MakeMove(int y, int x) {
     if (x < 0 || x >= Game::Size || y < 0 || y >= Game::Size) {
-	return false;
+        return false;
     }
-  
+
     if (mBoard[x][y] != Color::NONE) {
         return false;
     }
-    
+
     mBoard[x][y] = mNextTurn;
     checkWinner(x, y);
 
@@ -57,22 +57,22 @@ void Game::checkWinner(int x, int y) {
     mWinner = isWinner ? mNextTurn : NONE;
 }
 
-static char toSymbol(Game::Color color) {
-    static array<char, 3> map = { 'X', 'O', ' ' };
+const string & Game::ColorToSymbol(Game::Color color) {
+    static array<string, 3> map = { "X", "O", " " };
     return map[color];
 }
 
 string Game::ToString() const {
     stringstream stream;
     if (Finished()) {
-	stream << "Winner [" << toSymbol(GetWinner()) << "]\n";
+        stream << "Winner [" << ColorToSymbol(GetWinner()) << "]\n";
     } else {
-	stream << "On move [" << toSymbol(mNextTurn) << "]\n";
+        stream << "On move [" << ColorToSymbol(mNextTurn) << "]\n";
     }
-    
+
     for (int c = 0; c < Game::Size; ++c) {
         for (int r = 0; r < Game::Size; ++r) {
-            stream << toSymbol(mBoard[c][r]) << (r == Game::Size - 1 ? '\n' : '|');
+            stream << ColorToSymbol(mBoard[c][r]) << (r == Game::Size - 1 ? '\n' : '|');
         }
         if (c != Game::Size - 1) {
             for (int r = 0; r < Game::Size; ++r) {
@@ -80,6 +80,7 @@ string Game::ToString() const {
             }
         }
     }
+
     return stream.str();
 }
 

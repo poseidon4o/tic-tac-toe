@@ -25,6 +25,11 @@ TextClient::TextClient(Socket sock): GameClient(std::move(sock)) {
 TextClient::~TextClient() {
 }
 
+void TextClient::SetColor(Game::Color c) {
+    string data = "You will be playing with: " + Game::ColorToSymbol(c) + "\n";
+    mSocket.SendRetries(data.c_str(), data.size());
+}
+
 bool TextClient::SendData(const Game & game) {
     string data = "Current board:\n" + game.ToString();
     return mSocket.SendRetries(data.c_str(), data.size());
@@ -59,6 +64,10 @@ BinaryClient::BinaryClient(Socket sock) : GameClient(std::move(sock)) {
 }
 
 BinaryClient::~BinaryClient() {
+}
+
+void BinaryClient::SetColor(Game::Color) {
+
 }
 
 bool BinaryClient::SendPrompt() {
