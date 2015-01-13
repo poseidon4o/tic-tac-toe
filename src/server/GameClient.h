@@ -2,7 +2,7 @@
 #define _GAME_CLIENT_H_INCLUDED_
 
 #include "../common/Net.h"
-#include "Game.h"
+#include "../common/Game.h"
 
 class GameClient {
 protected:

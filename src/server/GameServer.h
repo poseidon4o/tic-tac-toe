@@ -2,9 +2,9 @@
 #define _GAME_SERVER_H_INCLUDED_
 
 #include "../common/Net.h"
+#include "../common/Game.h"
 
 #include "GameClient.h"
-#include "Game.h"
 
 #include <vector>
 #include <stack>
