@@ -72,12 +72,17 @@ bool BinaryClient::SendData(const Game & game) {
 }
 
 bool BinaryClient::GetNextTurn(int & x, int & y) {
-    static char buff[sizeof(int) * 2] = { 0, };
-
+    char buff[sizeof(int) * 2] = { 0, };
     int received = sizeof(buff);
-    
+  
     if (mSocket.RecvMax(buff, received)) {
-        if (received)
+        if (received != sizeof(buff)) {
+            return false;
+        }
+        mSocket.ClearRecv();
+        x = static_cast<int>(*buff);
+        y = static_cast<int>(*(buff + sizeof(int)));
+        return true;
     }
 
 
