@@ -4,6 +4,8 @@
 #include <sstream>
 #include <iostream>
 #include <cstring>
+#include <vector>
+
 using namespace std;
 
 GameClient::GameClient(Socket sock): mSocket(std::move(sock)) {
@@ -37,7 +39,7 @@ bool TextClient::GetNextTurn(int & x, int & y) {
     char input[8];
     int received = sizeof(input) - 1;
 
-    if (mSocket.RecvMax(reinterpret_cast<char*>(&input), received) && received) {
+    if (mSocket.RecvMax(reinterpret_cast<char*>(&input), received)) {
         input[received] = 0;
         stringstream strm(input);
         int ix, iy;
@@ -50,4 +52,34 @@ bool TextClient::GetNextTurn(int & x, int & y) {
     }
 
     return false;
+}
+
+
+BinaryClient::BinaryClient(Socket sock) : GameClient(std::move(sock)) {
+}
+
+BinaryClient::~BinaryClient() {
+}
+
+bool BinaryClient::SendPrompt() {
+    return true;
+}
+
+bool BinaryClient::SendData(const Game & game) {
+    vector<uint8_t> data;
+    game.Serialize(data);
+    return mSocket.SendRetries(reinterpret_cast<const char *>(data.data()), data.size());
+}
+
+bool BinaryClient::GetNextTurn(int & x, int & y) {
+    static char buff[sizeof(int) * 2] = { 0, };
+
+    int received = sizeof(buff);
+    
+    if (mSocket.RecvMax(buff, received)) {
+        if (received)
+    }
+
+
+    return 1;
 }

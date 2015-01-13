@@ -4,6 +4,7 @@
 #include <array>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 const int GameSize = 3;
 
@@ -27,6 +28,7 @@ public:
     bool MakeMove(int y, int x);
 
     std::string ToString() const;
+    void Serialize(std::vector<uint8_t> & data) const;
 
 private:
     void checkWinner(int x, int y);

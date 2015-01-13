@@ -31,4 +31,16 @@ public:
     bool SendData(const Game & game) override;
 };
 
+
+
+class BinaryClient : public GameClient {
+public:
+    BinaryClient(Socket sock);
+    ~BinaryClient() override;
+
+    bool SendPrompt() override;
+    bool GetNextTurn(int & x, int & y) override;
+    bool SendData(const Game & game) override;
+};
+
 #endif // _GAME_CLIENT_H_INCLUDED_

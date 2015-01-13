@@ -82,3 +82,18 @@ string Game::ToString() const {
     }
     return stream.str();
 }
+
+static void append(vector<uint8_t> & dst, const char * data, int size) {
+    for (int c = 0; c < size; ++c) {
+        dst.push_back(data[c]);
+    }
+}
+
+void Game::Serialize(vector<uint8_t> & data) const {
+    data.clear();
+    data.reserve(sizeof(*this));
+    append(data, reinterpret_cast<const char *>(&GameSize), sizeof(GameSize));
+    append(data, reinterpret_cast<const char *>(&mBoard), sizeof(mBoard));
+    append(data, reinterpret_cast<const char *>(&mNextTurn), sizeof(mNextTurn));
+    append(data, reinterpret_cast<const char *>(&mWinner), sizeof(mWinner));
+}
