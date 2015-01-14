@@ -96,6 +96,5 @@ bool BinaryClient::GetNextTurn(int & x, int & y) {
         return true;
     }
 
-
-    return 1;
+    return false;
 }

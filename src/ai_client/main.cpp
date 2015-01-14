@@ -32,7 +32,7 @@ int main(int argc, char * argv[]) {
         for (int c = 0; c < botCount; ++c) {
             if (!bots[c] || !bots[c]->Update()) {
                 delete bots[c];
-                bots[c] = new AiClient(min(c, 9), ip);
+                bots[c] = new AiClient(min(max(c, 1), 9), ip);
             }
         }
     }
