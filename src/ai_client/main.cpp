@@ -8,10 +8,20 @@ using namespace std;
 
 int main(int argc, char * argv[]) {
     int botCount = 9;
-    if (argc == 2) {
-        stringstream strm(argv[1]);
+
+    if (argc < 2) {
+        cout << "Usage\n\t" << argv[0] << " IP [bot-count=" << botCount << "]\n";
+        return 0;
+    } 
+
+    string ip(argv[1]);
+
+    if (argc == 3) {
+        stringstream strm(argv[2]);
         strm >> botCount;
     }
+
+    cout << "Running " << botCount << " Ai clients to server " << ip << endl;
 
     AiClient ** bots = new AiClient*[botCount];
     for (int c = 0; c < botCount; ++c) {
@@ -22,7 +32,7 @@ int main(int argc, char * argv[]) {
         for (int c = 0; c < botCount; ++c) {
             if (!bots[c] || !bots[c]->Update()) {
                 delete bots[c];
-                bots[c] = new AiClient(7, "127.0.0.1");
+                bots[c] = new AiClient(min(c, 9), ip);
             }
         }
     }
