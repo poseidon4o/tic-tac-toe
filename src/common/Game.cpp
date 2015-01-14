@@ -1,7 +1,10 @@
 #include "Game.h"
+
+#include <cstring>
 #include <algorithm>
 #include <sstream>
 #include <cassert>
+
 using namespace std;
 
 Game::Game(Game::Color first): mNextTurn(first), mWinner(Color::NONE) {

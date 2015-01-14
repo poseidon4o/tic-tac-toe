@@ -217,7 +217,6 @@ Client::Client(): Socket(-1) {
 bool Client::Connect(const std::string & ip, int port) {
 
     mSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    int r = WSAGetLastError();
     if (mSocket == -1) {
         return false;
     }
