@@ -48,7 +48,7 @@ bool TextClient::GetNextTurn(int & x, int & y) {
         input[received] = 0;
         stringstream strm(input);
         int ix, iy;
-        if ((strm >> ix) && (strm >> iy)) {
+        if ((strm >> iy) && (strm >> ix)) {
             x = ix;
             y = iy;
             mSocket.ClearRecv();
@@ -76,7 +76,9 @@ bool BinaryClient::SendPrompt() {
 
 bool BinaryClient::SendData(const Game & game) {
     vector<uint8_t> data;
+    data.push_back(0);
     game.Serialize(data);
+    data[0] = data.size();
     return mSocket.SendRetries(reinterpret_cast<const char *>(data.data()), data.size());
 }
 

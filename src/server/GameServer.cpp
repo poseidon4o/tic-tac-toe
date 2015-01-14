@@ -5,7 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <functional>
-
+#include <iostream>
 using namespace std;
 
 GamePair::GamePair(remote_cl left, remote_cl right) : mGame(Game::Color::X), mSentData(false), mGetData(false) {
@@ -85,10 +85,17 @@ GameServer::GameServer() {
 
 remote_cl GameServer::getClient() {
     Socket sock = Accept();
-    if (sock) {
+    if (!sock) {
+        return std::unique_ptr<TextClient>(nullptr);
+    }
+
+    uint64_t id = -1;
+    int size = sizeof(id);
+    if (!sock.RecvMax(reinterpret_cast<char*>(&id), size) || size != sizeof(id) || id != 0) {
         return std::unique_ptr<TextClient>(new TextClient(std::move(sock)));
     }
-    return std::unique_ptr<TextClient>(nullptr);
+
+    return std::unique_ptr<BinaryClient>(new BinaryClient(std::move(sock)));
 }
 
 void GameServer::run() {
@@ -99,6 +106,7 @@ void GameServer::run() {
         }
 
         while (mWaiting.size() >= 2) {
+            std::cout << "New game\n";
             remote_cl left = std::move(mWaiting.back());
             mWaiting.pop_back();
             remote_cl right = std::move(mWaiting.back());

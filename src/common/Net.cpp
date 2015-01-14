@@ -35,7 +35,7 @@ Socket::~Socket() {
 }
 
 int Socket::Send(const char * data, int size) {
-    return mSocket != -1 ? send(mSocket, data, size, 0) : -1;
+    return mSocket != -1 ? send(mSocket, data, size, 0) : 0;
 }
 
 static bool wouldBlock() {
@@ -52,6 +52,7 @@ bool Socket::SendRetries(const char * data, int size, int retries) {
     bool block = false;
     do {
         int got = Send(data + sent, size - sent);
+        sent += got;
         if (got == 0) {
             mSocket = -1;
             return false;
@@ -68,7 +69,7 @@ bool Socket::SendRetries(const char * data, int size, int retries) {
 }
 
 int Socket::Recv(char * data, int size) {
-    return mSocket != -1 ? recv(mSocket, data, size, 0) : -1;
+    return mSocket != -1 ? recv(mSocket, data, size, 0) : 0;
 }
 
 bool Socket::RecvMax(char * data, int & size) {
@@ -207,11 +208,16 @@ Socket Server::Accept() {
 }
 
 Client::Client(): Socket(-1) {
+#ifdef C_WIN_SOCK
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+#endif
 }
 
 bool Client::Connect(const std::string & ip, int port) {
 
     mSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    int r = WSAGetLastError();
     if (mSocket == -1) {
         return false;
     }

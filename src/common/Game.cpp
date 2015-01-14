@@ -1,7 +1,7 @@
 #include "Game.h"
 #include <algorithm>
 #include <sstream>
-
+#include <cassert>
 using namespace std;
 
 Game::Game(Game::Color first): mNextTurn(first), mWinner(Color::NONE) {
@@ -11,7 +11,16 @@ Game::Game(Game::Color first): mNextTurn(first), mWinner(Color::NONE) {
 }
 
 bool Game::Finished() const {
-    return GetWinner() != Game::Color::NONE;
+    if (GetWinner() != Game::Color::NONE) {
+        return true;
+    }
+    bool full = true;
+    for (int c = 0; c < Game::Size; ++c) {
+        for (int r = 0; r < Game::Size; ++r) {
+            full = full && mBoard[c][r] != Game::Color::NONE;
+        }
+    }
+    return full;
 }
 
 Game::Color Game::GetWinner() const {
@@ -22,7 +31,15 @@ Game::Color Game::OnMove() const {
     return mNextTurn;
 }
 
-bool Game::MakeMove(int y, int x) {
+bool Game::operator==(const Game & other) {
+    return 0 == memcmp(&mBoard, &other.mBoard, sizeof(mBoard)) && mWinner == other.mWinner && mNextTurn == other.mNextTurn;
+}
+
+const Game::Row & Game::operator[](int r) const {
+    return mBoard[r];
+}
+
+bool Game::MakeMove(int x, int y) {
     if (x < 0 || x >= Game::Size || y < 0 || y >= Game::Size) {
         return false;
     }
@@ -91,10 +108,34 @@ static void append(vector<uint8_t> & dst, const char * data, int size) {
 }
 
 void Game::Serialize(vector<uint8_t> & data) const {
-    data.clear();
-    data.reserve(sizeof(*this));
-    append(data, reinterpret_cast<const char *>(&GameSize), sizeof(GameSize));
-    append(data, reinterpret_cast<const char *>(&mBoard), sizeof(mBoard));
-    append(data, reinterpret_cast<const char *>(&mNextTurn), sizeof(mNextTurn));
-    append(data, reinterpret_cast<const char *>(&mWinner), sizeof(mWinner));
+    int initialSize = data.size();
+    int mySize = sizeof(*this);
+    data.reserve(mySize);
+
+    append(data, reinterpret_cast<const char *>(&mBoard), sizeof(mBoard)); // 9
+    append(data, reinterpret_cast<const char *>(&mNextTurn), sizeof(mNextTurn)); // 1
+    append(data, reinterpret_cast<const char *>(&mWinner), sizeof(mWinner)); // 1
+
+    static_assert(sizeof(Game) == (sizeof(Game::mBoard) + sizeof(Game::mNextTurn) + sizeof(Game::mWinner)), "Deserialize mismatching sizes!");
+}
+
+bool Game::Deserialize(vector<uint8_t> & data, Game & target) {
+    if (data.size() != sizeof(Game)) {
+        return false;
+    }
+    
+    int c = 0;
+
+    Game game;
+    memcpy(reinterpret_cast<char*>(&game.mBoard), data.data() + c, sizeof(game.mBoard));
+    c += sizeof(game.mBoard);
+    
+    memcpy(reinterpret_cast<char*>(&game.mNextTurn), data.data() + c, sizeof(game.mNextTurn));
+    c += sizeof(game.mNextTurn);
+
+    memcpy(reinterpret_cast<char*>(&game.mWinner), data.data() + c, sizeof(game.mWinner));
+    c += sizeof(game.mWinner);
+
+    target = game;
+    return true;
 }
