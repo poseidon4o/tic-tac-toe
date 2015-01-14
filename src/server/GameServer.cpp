@@ -106,7 +106,6 @@ void GameServer::run() {
         }
 
         while (mWaiting.size() >= 2) {
-            std::cout << "New game\n";
             remote_cl left = std::move(mWaiting.back());
             mWaiting.pop_back();
             remote_cl right = std::move(mWaiting.back());
