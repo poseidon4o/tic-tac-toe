@@ -13,6 +13,13 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AiClient", "..\AiClient\AiClient.vcxproj", "{05630402-40C6-499B-AC03-1F27A88DE03A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6D7DDC5A-4C9F-4600-B38E-1442C78847E6} = {6D7DDC5A-4C9F-4600-B38E-1442C78847E6}
+		{71AA188A-6828-4006-81C3-E59E34BE781B} = {71AA188A-6828-4006-81C3-E59E34BE781B}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TextClient", "..\TextClient\TextClient.vcxproj", "{600E53A8-E708-467A-A074-F8F85149DFC1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6D7DDC5A-4C9F-4600-B38E-1442C78847E6} = {6D7DDC5A-4C9F-4600-B38E-1442C78847E6}
+		{71AA188A-6828-4006-81C3-E59E34BE781B} = {71AA188A-6828-4006-81C3-E59E34BE781B}
 	EndProjectSection
 EndProject
 Global
@@ -33,6 +40,10 @@ Global
 		{05630402-40C6-499B-AC03-1F27A88DE03A}.Debug|Win32.Build.0 = Debug|Win32
 		{05630402-40C6-499B-AC03-1F27A88DE03A}.Release|Win32.ActiveCfg = Release|Win32
 		{05630402-40C6-499B-AC03-1F27A88DE03A}.Release|Win32.Build.0 = Release|Win32
+		{600E53A8-E708-467A-A074-F8F85149DFC1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{600E53A8-E708-467A-A074-F8F85149DFC1}.Debug|Win32.Build.0 = Debug|Win32
+		{600E53A8-E708-467A-A074-F8F85149DFC1}.Release|Win32.ActiveCfg = Release|Win32
+		{600E53A8-E708-467A-A074-F8F85149DFC1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
