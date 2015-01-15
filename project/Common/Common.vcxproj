@@ -12,10 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\common\Game.cpp" />
+    <ClCompile Include="..\..\src\common\Log.cpp" />
     <ClCompile Include="..\..\src\common\Net.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common\Game.h" />
+    <ClInclude Include="..\..\src\common\Log.h" />
     <ClInclude Include="..\..\src\common\Net.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

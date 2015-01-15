@@ -1,3 +1,4 @@
+#include "../common/Log.h"
 #include "GameServer.h"
 
 #include <iostream>

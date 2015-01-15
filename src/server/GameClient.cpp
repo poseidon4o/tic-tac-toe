@@ -8,6 +8,9 @@
 
 using namespace std;
 
+#include "../common/Log.h"
+static Log & SL = Log::Instance("server");
+
 GameClient::GameClient(Socket sock): mSocket(std::move(sock)) {
 }
 
@@ -53,6 +56,8 @@ bool TextClient::GetNextTurn(int & x, int & y) {
             y = iy;
             mSocket.ClearRecv();
             return true;
+        } else {
+            SL(Log::NOTICE) << "Client sent wrong input " << mSocket.GetPeerName();
         }
     }
 
@@ -88,6 +93,7 @@ bool BinaryClient::GetNextTurn(int & x, int & y) {
   
     if (mSocket.RecvMax(buff, received)) {
         if (received != sizeof(buff)) {
+            SL(Log::WARNING) << "BinaryClient sent wrong input";
             return false;
         }
         mSocket.ClearRecv();
